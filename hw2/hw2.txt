@@ -1,0 +1,55 @@
+convert_grammar:
+The question is to construct a function that corresponds
+to different nontermianls, so I first think about deriving the
+rules for each nonterminal in the grammar. But the grammar used in HW1
+is not in order, so I have to go through the whole grammar and find
+all the matching rules of the certain nonterminal. As a result,I write
+a recursive function that takes two variables x and g.
+x is the nonterminal I want to find and g is the grammar to search from.
+The function compares the symbol of every rule with x and add the right hand
+side to the return list if correct.
+
+
+parse_prefix:
+The question is to follow the rule list, matches the frag with rules, and
+call the acceptor to test if the prefix works.The rule has to be add to
+derivation test when running through it, so there should be a helper function
+that takes derivation as a parameter to keep updating it. The structure of the
+matcher is pretty straight and clear, but to check if a specific rule matches
+there should be another helper function. While checking the rule symbols, the
+terminal case is a lot simpler than checking the nonterminal in each rule as
+that will goes in another rule.
+I first try to use a distinct helper function for nonterminal case, but at last
+notice that the helper function should have nearly same structure as the
+original amtcher, so I am thinking if it can call the matcher function directly
+,but then the function does not test the symbols after the nonterminal. After
+discussing with a friend, we found out that we can change the acceptor function
+to the helper function itself and thus checks the following parts of the rule.
+The code,at last,has two mutual recursive function.
+
+rule_matcher: it takes a specific rule to match the passed fragment.It first
+matches the rule, then the fragment and the rule again. The double check of
+rule is necessary. If not, the fragment would be matched first and
+would return None if [], but if the suffix is [], the code will finally reaches
+the case of [] fragment and thus returns an incorrect answer. So the rule is
+checked first and would return what the accpetor returns if []. And if the
+fragment is not [], the rule is matched. If the head symbol is terminal, just
+matches it with the head of fragment passed in and continues on the rest of 
+rule and fragment if correct. For nonterminal, the function calls the matcher
+function with the specific nonterminal symbol and a function created by
+rule_matcher itself.
+
+matcher: the strcuture of matcher is straightforward. It takes a whole rule
+list to find the corresponding derivation and prefix. So it goes through the
+whole rule list, calls the rule_matcher function on the head rule and updated
+the derivation with the currently checking rule. If it is matched then returns 
+the result, and if not called the rule_fucntion again with the original
+derivation.
+
+problem: When dealing with the nonterminal case, I first wrote a function that
+returns whenever it finds a matching prefix and then continues on the next
+symbol in the rule. It works for most cases, but then there is a rule like
+[T; N;T] which specifies the substring for the Nonterminal in the middle.
+So my code might return a substring that is not that, checks the terminal at
+last and finds it incorrect while the rule is correct if it is going to parse
+the exact substring with the nonterminal. 
