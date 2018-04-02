@@ -1,0 +1,6 @@
+(define d50 (append '(1 2 3 4 5) '6))
+(define d51 (cons d50 (cdr (cdr d50))))
+(define d52 (cons d50 (cdr (cdr d50))))
+
+> (map-ld (lambda (x) (+ x 1)) d51 d52)
+'((((2 3 3 4 5 . 6) 3 4 5 . 6) ((2 3 3 4 5 . 6) 3 4 5 . 6)))
